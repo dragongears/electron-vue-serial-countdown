@@ -1,6 +1,8 @@
 {
   "name": "electron-vue-serial-countdown",
   "version": "0.1.0",
+  "author": "Art Dahm <art@dahm.com>",
+  "description": "Primarily a GUI front end for USB Serial Countdown, but can be used as a stand alone program.",
   "private": true,
   "scripts": {
     "serve": "vue-cli-service serve",
