@@ -1,0 +1,8 @@
+{
+  "stop": false,
+  "speed": 3,
+  "color": "blue",
+  "serialPort": "/dev/ttyACM0",
+  "baudRate": 4800,
+  "serialGui": true
+}

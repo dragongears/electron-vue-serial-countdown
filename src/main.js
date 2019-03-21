@@ -2,7 +2,11 @@ import Vue from 'vue'
 import './plugins/vuetify'
 import App from './App.vue'
 import store from './store'
+import axios from 'axios'
+import 'material-design-icons/iconfont/material-icons.css'
+import 'typeface-roboto/index.css'
 
+Vue.http = Vue.prototype.$http = axios
 Vue.config.productionTip = false
 
 new Vue({
