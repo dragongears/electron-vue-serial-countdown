@@ -1,0 +1,5 @@
+linux:
+ target:
+  - '7z'
+  - 'AppImage'
+  - 'snap'
