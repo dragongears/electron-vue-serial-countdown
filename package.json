@@ -15,7 +15,7 @@
   },
   "main": "background.js",
   "dependencies": {
-    "serialport": "^7.1.4",
+    "serialport": "^6.2.2",
     "axios": "^0.18.0",
     "jsonfile": "^5.0.0",
     "material-design-icons": "^3.0.1",
