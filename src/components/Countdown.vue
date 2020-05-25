@@ -1,44 +1,35 @@
 <template>
-    <main>
-      <v-toolbar fixed app height="120">
-        <countdown-display :display="display"></countdown-display>
-      </v-toolbar>
-      <v-content>
-        <v-container fluid>
-          <v-expansion-panel>
-            <event-list :events="events" @edit:event="editEvent" @delete:event="deleteEvent"></event-list>
-            <settings-list :settings="settings"></settings-list>
-          </v-expansion-panel>
-          <!-- Add event FAB -->
-          <v-btn fixed dark fab bottom right color="pink" @click="addEvent">
-            <v-icon>add</v-icon>
-          </v-btn>
-        </v-container>
-      </v-content>
-      <!-- Edit/Add event dialog -->
-      <v-dialog v-model="editDialog" max-width="500px">
-        <v-card>
-          <v-card-text>
-            <v-layout row>
-              <v-text-field
-                name="eventTitleInput"
-                label="Event title"
-                v-model="edit.title"
-              ></v-text-field>
-            </v-layout>
-            <v-date-picker
-              v-model="edit.date"
-              full-width
-              landscape
-              class="mt-3"
-            ></v-date-picker>
-          </v-card-text>
-          <v-card-actions>
-            <v-btn color="primary" flat @click.stop="dialogDone">Close</v-btn>
-          </v-card-actions>
-        </v-card>
-      </v-dialog>
-    </main>
+  <main>
+    <v-app-bar fixed app height="120">
+      <countdown-display :display="display"></countdown-display>
+    </v-app-bar>
+    <v-content>
+      <v-container fluid>
+        <v-expansion-panels>
+          <event-list :events="events" @edit:event="editEvent" @delete:event="deleteEvent"></event-list>
+          <settings-list :settings="settings"></settings-list>
+        </v-expansion-panels>
+        <!-- Add event FAB -->
+        <v-btn fixed dark fab bottom right color="pink" @click="addEvent">
+          <v-icon>add</v-icon>
+        </v-btn>
+      </v-container>
+    </v-content>
+    <!-- Edit/Add event dialog -->
+    <v-dialog v-model="editDialog" max-width="500px">
+      <v-card>
+        <v-card-text>
+          <v-layout row>
+            <v-text-field name="eventTitleInput" label="Event title" v-model="edit.title"></v-text-field>
+          </v-layout>
+          <v-date-picker v-model="edit.date" full-width landscape class="mt-3"></v-date-picker>
+        </v-card-text>
+        <v-card-actions>
+          <v-btn color="primary" text @click.stop="dialogDone">Close</v-btn>
+        </v-card-actions>
+      </v-card>
+    </v-dialog>
+  </main>
 </template>
 
 <script>
@@ -57,25 +48,25 @@ export default {
   components: {
     CountdownDisplay,
     EventList,
-    SettingsList
+    SettingsList,
   },
-  data () {
+  data() {
     return {
       // events: [],
-      display: {event: '', days: ''},
-      edit: {title: '', date: null},
+      display: { event: '', days: '' },
+      edit: { title: '', date: null },
       index: 0,
-      editDialog: false
+      editDialog: false,
     }
   },
   computed: {
     ...mapState({
       events: state => state.events,
-      settings: state => state.settings
-    })
+      settings: state => state.settings,
+    }),
   },
   methods: {
-    dateCompare (a, b) {
+    dateCompare(a, b) {
       let aa = new Date(a.yy, a.mm, a.dd).getTime()
       let bb = new Date(b.yy, b.mm, b.dd).getTime()
 
@@ -87,11 +78,11 @@ export default {
       }
       return 0
     },
-    sortEvents () {
+    sortEvents() {
       console.log('sortEvents()')
       this.updateEvents(this.events.sort(this.dateCompare))
     },
-    intervalFunc () {
+    intervalFunc() {
       if (this.events.length !== 0) {
         if (next >= this.events.length) {
           next = 0
@@ -106,7 +97,7 @@ export default {
 
         if (days < 0) {
           this.removeEvent(next)
-          jsonfile.writeFileSync(eventsFilename, this.events, {spaces: 2})
+          jsonfile.writeFileSync(eventsFilename, this.events, { spaces: 2 })
           next = 0
         } else if (days === 0) {
           console.log(this.events[next].event)
@@ -135,27 +126,27 @@ export default {
         next = 0
       }
     },
-    readJsonFile (filename, defaults) {
+    readJsonFile(filename, defaults) {
       try {
         return jsonfile.readFileSync(filename)
       } catch (e) {
-        jsonfile.writeFileSync(filename, defaults, {spaces: 2})
+        jsonfile.writeFileSync(filename, defaults, { spaces: 2 })
         return defaults
       }
     },
-    deleteEvent (index) {
+    deleteEvent(index) {
       this.removeEvent(index, 1)
-      jsonfile.writeFileSync(eventsFilename, this.events, {spaces: 2})
+      jsonfile.writeFileSync(eventsFilename, this.events, { spaces: 2 })
       console.log(`delete ${index}`)
     },
-    editEvent (index) {
+    editEvent(index) {
       console.log(`edit ${index}`)
       this.edit.title = this.events[index].event
       this.edit.date = `${this.events[index].yy}-${this.events[index].mm}-${this.events[index].dd}`
       this.index = index
       this.editDialog = true
     },
-    addEvent () {
+    addEvent() {
       console.log(`add event`)
       let d = new Date()
       this.edit.title = ''
@@ -163,7 +154,7 @@ export default {
       this.index = -1
       this.editDialog = true
     },
-    dialogDone () {
+    dialogDone() {
       console.log(`dialogDone()`)
       this.editDialog = false
 
@@ -179,30 +170,25 @@ export default {
           if (this.index === -1) {
             this.appendEvent(newEvent)
           } else {
-            this.updateEvents(this.events.map((evt, indx) => indx === this.index ? newEvent : evt))
+            this.updateEvents(this.events.map((evt, indx) => (indx === this.index ? newEvent : evt)))
           }
 
           this.sortEvents()
-          jsonfile.writeFileSync(eventsFilename, this.events, {spaces: 2})
+          jsonfile.writeFileSync(eventsFilename, this.events, { spaces: 2 })
         }
       }
     },
-    open (link) {
+    open(link) {
       this.$electron.shell.openExternal(link)
     },
-    ...mapMutations([
-      'updateEvents',
-      'appendEvent',
-      'removeEvent'
-    ])
+    ...mapMutations(['updateEvents', 'appendEvent', 'removeEvent']),
   },
-  mounted () {
+  mounted() {
     this.$store.dispatch('loadEvents')
     // this.updateEvents(this.readJsonFile(eventsFilename, []))
     this.intervalFunc()
-  }
+  },
 }
 </script>
 
-<style>
-</style>
+<style></style>

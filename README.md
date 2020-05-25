@@ -4,7 +4,7 @@
 
 #### Build Setup
 
-``` bash
+```bash
 # install dependencies
 npm install
 
@@ -22,6 +22,13 @@ npm test
 npm run lint
 
 ```
+
+#### Changelog
+
+- V1.4.0 - 2020 Update
+  - updated Electron to 8.0.0
+  - updated serialport to 9.0.0
+  - updated Vuetify to 2.2.11
 
 ---
 

@@ -1,6 +1,7 @@
 import Vue from 'vue'
 import Vuex from 'vuex'
 // import VuexPersist from 'vuex-persist'
+const SerialPort = require('serialport')
 const jsonfile = require('jsonfile')
 const eventsFilename = './events.json'
 const settingsFilename = './settings.json'
@@ -16,11 +17,11 @@ Vue.use(Vuex)
 //   })
 // })
 
-function readJsonFile (filename, defaults) {
+function readJsonFile(filename, defaults) {
   try {
     return jsonfile.readFileSync(filename)
   } catch (e) {
-    jsonfile.writeFileSync(filename, defaults, {spaces: 2})
+    jsonfile.writeFileSync(filename, defaults, { spaces: 2 })
     return defaults
   }
 }
@@ -30,7 +31,7 @@ export default new Vuex.Store({
   state: {
     events: [],
     settings: {},
-    ports: []
+    ports: [],
   },
   getters: {
     events: state => {
@@ -41,7 +42,7 @@ export default new Vuex.Store({
     },
     ports: state => {
       return state.ports
-    }
+    },
   },
   mutations: {
     updateEvents: (state, payload) => {
@@ -58,30 +59,34 @@ export default new Vuex.Store({
     },
     updatePorts: (state, payload) => {
       state.ports = payload
-    }
+    },
   },
   actions: {
-    loadEvents: (context) => {
+    loadEvents: context => {
       const events = readJsonFile(eventsFilename, [])
       context.commit('updateEvents', events)
     },
-    loadSettings: (context) => {
-      const settings = readJsonFile(settingsFilename, [])
+    loadSettings: context => {
+      const settings = readJsonFile(settingsFilename, {
+        serialGui: false,
+        serialPort: '/dev/ttyACM0',
+        baudRate: 115200,
+        color: 'white',
+        speed: 5,
+      })
       context.commit('updateSettings', settings)
     },
     saveSettings: (context, settings) => {
       context.commit('updateSettings', settings)
-      jsonfile.writeFileSync(settingsFilename, settings, {spaces: 2})
+      jsonfile.writeFileSync(settingsFilename, settings, { spaces: 2 })
     },
-    loadPorts: (context) => {
-      const SerialPort = require('serialport')
-      // callback approach
-      SerialPort.list(function (err, ports) {
-        if (!err) {
-          const portsInUse = ports.filter(port => port.pnpId)
+    loadPorts: context => {
+      SerialPort.list().then(ports => {
+        ports.forEach(() => {
+          const portsInUse = ports.filter(port => port.comName)
           context.commit('updatePorts', portsInUse)
-        }
+        })
       })
-    }
-  }
+    },
+  },
 })
